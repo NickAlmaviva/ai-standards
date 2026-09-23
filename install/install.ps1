@@ -41,8 +41,9 @@ $JsonDir = $AbsDir -replace '\\', '/'
 $GenDir = Join-Path $HOME ".config\ai-standards"
 $GenFile = Join-Path $GenDir "kilo.jsonc"
 New-Item -ItemType Directory -Force -Path $GenDir | Out-Null
-$template = Get-Content -Raw -Path (Join-Path $AbsDir "config\kilo.template.jsonc")
-$template.Replace("__AI_STANDARDS_HOME__", $JsonDir) | Set-Content -Path $GenFile -Encoding UTF8
+$template = Get-Content -Raw -Encoding UTF8 -Path (Join-Path $AbsDir "config\kilo.template.jsonc")
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($GenFile, $template.Replace("__AI_STANDARDS_HOME__", $JsonDir), $utf8NoBom)
 Set-Content -Path (Join-Path $GenDir "installed-ref") -Value $Ref
 Log "Config generata: $GenFile"
 
