@@ -1,4 +1,5 @@
 ---
+agent: aziendale
 description: Crea un nuovo componente Angular secondo gli standard del SAE
 ---
 Devo creare un nuovo componente: $ARGUMENTS

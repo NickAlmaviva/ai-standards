@@ -4,7 +4,7 @@
 Output:
   dist/skills/index.json
   dist/skills/<name>/...     (tutti i file della skill)
-  dist/rules/*.md            (utilizzabili come URL in "instructions")
+  dist/rules/*.md            (se presenti, utilizzabili come URL in "instructions")
 
 La 'version' di ogni skill è un hash del suo contenuto: cambia solo se la
 skill cambia, così Kilo riscarica solo ciò che è stato modificato.
@@ -32,7 +32,8 @@ def main():
         shutil.copytree(d, out_skills / d.name)
         index["skills"].append({"name": d.name, "version": h.hexdigest()[:12], "files": files})
     (out_skills / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
-    shutil.copytree(ROOT / "rules", DIST / "rules")
+    if (ROOT / "rules").exists():
+        shutil.copytree(ROOT / "rules", DIST / "rules")
     print(f"dist/ generato con {len(index['skills'])} skill")
 
 

@@ -13,13 +13,15 @@ metadata:
 ## Struttura dei package
 
 ```
-com.tuaazienda.<servizio>
+<base-package>          # quello della classe @SpringBootApplication
 ├── api/            # controller REST + DTO di request/response
 ├── application/    # service applicativi (casi d'uso), transazioni
 ├── domain/         # modello di dominio, regole di business, porte
 ├── infrastructure/ # repository JPA, client verso altri servizi, messaging
 └── config/         # configurazione Spring
 ```
+
+Usa sempre il base package esistente del progetto (quello che contiene la classe annotata con `@SpringBootApplication`): non creare nuove radici di package come `com.tuaazienda`. Se il progetto ha già una struttura diversa, seguila e segnalalo.
 
 Le dipendenze vanno sempre verso l'interno: `api` → `application` → `domain`. Il `domain` non importa nulla di Spring Web o JPA.
 

@@ -3,6 +3,8 @@ description: Revisore del codice secondo gli standard aziendali. Usalo per revis
 mode: subagent
 steps: 30
 permission:
+  skill:
+    "*": allow
   edit: deny
   bash:
     "*": deny

@@ -1,17 +1,13 @@
 // ai-standards — configurazione centrale Kilo Code
 // NON modificare il file generato in ~/.config/ai-standards/kilo.jsonc:
-// modifica questo template nel repo e rilancia install/update.
-// Il placeholder AI_STANDARDS_HOME (tra doppi underscore) viene sostituito con il path assoluto del clone.
+// modifica questo template nel repo e rilancia l'installazione.
+//
+// Dalla v0.2.0 gli standard sono "opt-in": regole e permessi vivono
+// nell'agente agents/aziendale.md. Qui restano solo:
+//  - i server MCP (collegati, ma con i tool vietati fuori dall'agente Aziendale)
+//  - il divieto delle skill aziendali per tutti gli altri agenti
 {
   "$schema": "https://app.kilo.ai/config.json",
-
-  // Regole sempre attive (tenerle brevi: finiscono in ogni sessione)
-  "instructions": [
-    "__AI_STANDARDS_HOME__/rules/*.md"
-  ],
-
-  // Skills, agents e commands vengono scoperti da KILO_CONFIG_DIR
-  // (root del repo). Qui non servono skills.paths.
 
   // MCP aziendali. I token arrivano da variabili d'ambiente del dev:
   // {env:...} viene risolto perché questa config è caricata via KILO_CONFIG (trusted).
@@ -31,7 +27,6 @@
       "timeout": 15000
     },
     "internal-docs": {
-      // Esempio di server locale (stdio)
       "type": "local",
       "command": ["npx", "-y", "@tuaazienda/internal-docs-mcp"],
       "environment": { "DOCS_BASE_URL": "https://docs.tuaazienda.it" },
@@ -39,36 +34,19 @@
     }
   },
 
-  // Permessi comuni. Ordine: pattern generici prima, specifici dopo.
+  // Permessi GLOBALI: valgono per tutti gli agenti (Code, Plan, Debug...).
+  // L'agente Aziendale li sovrascrive con i propri (vedi agents/aziendale.md).
+  // Ordine: pattern generici prima, specifici dopo.
   "permission": {
-    "edit": {
+    "skill": {
       "*": "allow",
-      ".env*": "deny",
-      "**/secrets/**": "deny",
-      "**/*.pem": "deny",
-      "**/*.key": "deny"
+      "be-spring-microservice": "deny",
+      "fe-angular-sae": "deny",
+      "api-contract-openapi": "deny",
+      "testing-standards": "deny"
     },
-    "bash": {
-      "*": "ask",
-      "git status*": "allow",
-      "git diff*": "allow",
-      "git log*": "allow",
-      "mvn *test*": "allow",
-      "./mvnw *test*": "allow",
-      "./gradlew test*": "allow",
-      "*mvnw* *test*": "allow",
-      "*mvnw* verify*": "allow",
-      "*gradlew* test*": "allow",
-      "npm test*": "allow",
-      "npm run lint*": "allow",
-      "npx ng test*": "allow",
-      "git push*": "ask",
-      "rm -rf*": "deny",
-      "kubectl delete*": "deny"
-    },
-    "gitlab_*": "ask",
-    "gitlab_get_*": "allow",
-    "gitlab_list_*": "allow",
-    "external_directory": "ask"
+    "gitlab_*": "deny",
+    "jira_*": "deny",
+    "internal-docs_*": "deny"
   }
 }

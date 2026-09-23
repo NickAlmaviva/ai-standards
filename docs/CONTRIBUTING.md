@@ -4,11 +4,12 @@
 
 | Hai bisogno di... | Crea |
 |---|---|
-| Una regola che vale sempre, per tutti | una voce in `rules/` (breve!) |
+| Una regola che vale sempre, per tutti | una voce nel prompt di `agents/aziendale.md` (breve!) |
 | Conoscenza su uno stack o un task specifico | una skill in `skills/<nome>/SKILL.md` |
-| Un ruolo con permessi dedicati (review, audit) | un agent in `agents/` |
+| Un ruolo con permessi dedicati (review, audit) | un agent in `agents/` (se usa skill aziendali, consenti `skill` nei suoi permessi) |
 | Un flusso ripetibile lanciato dall'utente | un command in `commands/` |
-| Un tool esterno | un server MCP in `config/kilo.template.jsonc` |
+| Un tool esterno | un server MCP in `config/kilo.template.jsonc` + permesso `<server>_*` in `agents/aziendale.md` |
+| Una nuova skill | la cartella in `skills/` + il suo nome nella lista `deny` di `config/kilo.template.jsonc` |
 
 ## Scrivere una buona skill
 

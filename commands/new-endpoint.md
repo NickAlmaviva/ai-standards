@@ -1,4 +1,5 @@
 ---
+agent: aziendale
 description: Crea un nuovo endpoint REST con approccio contract-first
 ---
 Devo creare un nuovo endpoint: $ARGUMENTS

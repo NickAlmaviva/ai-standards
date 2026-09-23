@@ -6,9 +6,9 @@ Controlli:
 - name == nome directory, formato [a-z0-9-], max 64 caratteri
 - description <= 1024 caratteri
 - nomi skill univoci
-- rules: dimensione massima (sono sempre in contesto)
+- agente aziendale: presente, mode primary, prompt entro la dimensione massima
 - agents/commands: frontmatter con description
-- config template: JSONC parsabile e placeholder presente
+- config template: JSONC parsabile, nessun token in chiaro
 """
 import json
 import re
@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
-MAX_RULE_CHARS = 4000
+MAX_AGENT_PROMPT_CHARS = 6000
 errors, warnings = [], []
 
 
@@ -65,11 +65,17 @@ def check_skills():
             warnings.append(f"{rel}: {lines} righe, sposta dettagli in references/")
 
 
-def check_rules():
-    for f in sorted((ROOT / "rules").glob("*.md")):
-        size = len(f.read_text(encoding="utf-8"))
-        if size > MAX_RULE_CHARS:
-            errors.append(f"{f.relative_to(ROOT)}: {size} caratteri (max {MAX_RULE_CHARS}); sposta in una skill")
+def check_main_agent():
+    f = ROOT / "agents" / "aziendale.md"
+    if not f.exists():
+        errors.append("agents/aziendale.md mancante: e' l'agente che contiene gli standard")
+        return
+    text = f.read_text(encoding="utf-8")
+    if frontmatter(f).get("mode") != "primary":
+        errors.append("agents/aziendale.md: deve avere 'mode: primary'")
+    body = re.sub(r"^---\s*\n.*?\n---\s*\n", "", text, count=1, flags=re.S)
+    if len(body) > MAX_AGENT_PROMPT_CHARS:
+        errors.append(f"agents/aziendale.md: prompt di {len(body)} caratteri (max {MAX_AGENT_PROMPT_CHARS}); sposta i dettagli in una skill")
 
 
 def check_md_with_description(folder: str):
@@ -113,15 +119,13 @@ def check_config():
             json.loads(strip_jsonc(text))
         except json.JSONDecodeError as e:
             errors.append(f"{rel}: JSONC non valido ({e})")
-        if rel.startswith("config/") and "__AI_STANDARDS_HOME__" not in text:
-            errors.append(f"{rel}: placeholder __AI_STANDARDS_HOME__ mancante")
         if re.search(r'"(Bearer\s+)?(glpat-|ghp_|sk-)[A-Za-z0-9_-]{8,}', text):
             errors.append(f"{rel}: sembra contenere un token in chiaro")
 
 
 if __name__ == "__main__":
     check_skills()
-    check_rules()
+    check_main_agent()
     check_md_with_description("agents")
     check_md_with_description("commands")
     check_config()
