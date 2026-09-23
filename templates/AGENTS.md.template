@@ -1,0 +1,20 @@
+# <Nome servizio / SAE>
+
+<!--
+Questo è l'UNICO file AI ammesso nel repository di progetto, ed è opzionale.
+Contiene SOLO contesto specifico di questo servizio. NON ripetere regole o
+convenzioni già presenti in ai-standards: vengono caricate automaticamente.
+Tienilo sotto le 40 righe.
+-->
+
+## Dominio
+<Cosa fa il servizio, in 2-3 frasi. Glossario dei termini di dominio.>
+
+## Dipendenze
+- Chiama: <servizi a valle>
+- Chiamato da: <servizi / SAE a monte>
+- Eventi pubblicati/consumati: <topic>
+
+## Particolarità
+- <Eccezioni motivate agli standard, es. "usa Liquibase invece di Flyway per motivi storici">
+- <Comandi specifici per build/test locale, se diversi dallo standard>

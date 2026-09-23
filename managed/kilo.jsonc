@@ -1,0 +1,21 @@
+// Esempio di config "managed" (enterprise) da distribuire via MDM/Ansible/GPO in:
+//   Linux:   /etc/kilo/kilo.jsonc
+//   macOS:   /Library/Application Support/kilo/kilo.jsonc
+//   Windows: %ProgramData%\kilo\kilo.jsonc
+// Ha la priorità più alta: i dev e i progetti NON possono sovrascriverla.
+// Metti qui solo ciò che deve essere imposto (sicurezza, provider ammessi).
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "edit": {
+      ".env*": "deny",
+      "**/secrets/**": "deny"
+    },
+    "bash": {
+      "rm -rf*": "deny",
+      "kubectl delete*": "deny"
+    }
+  }
+  // Esempio: limitare i provider di modelli ammessi
+  // "enabled_providers": ["kilo"]
+}

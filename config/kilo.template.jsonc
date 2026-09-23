@@ -1,0 +1,74 @@
+// ai-standards — configurazione centrale Kilo Code
+// NON modificare il file generato in ~/.config/ai-standards/kilo.jsonc:
+// modifica questo template nel repo e rilancia install/update.
+// Il placeholder AI_STANDARDS_HOME (tra doppi underscore) viene sostituito con il path assoluto del clone.
+{
+  "$schema": "https://app.kilo.ai/config.json",
+
+  // Regole sempre attive (tenerle brevi: finiscono in ogni sessione)
+  "instructions": [
+    "__AI_STANDARDS_HOME__/rules/*.md"
+  ],
+
+  // Skills, agents e commands vengono scoperti da KILO_CONFIG_DIR
+  // (root del repo). Qui non servono skills.paths.
+
+  // MCP aziendali. I token arrivano da variabili d'ambiente del dev:
+  // {env:...} viene risolto perché questa config è caricata via KILO_CONFIG (trusted).
+  "mcp": {
+    "gitlab": {
+      "type": "remote",
+      "url": "https://mcp.tuaazienda.it/gitlab",
+      "headers": { "Authorization": "Bearer {env:AI_STD_GITLAB_TOKEN}" },
+      "enabled": false,
+      "timeout": 15000
+    },
+    "jira": {
+      "type": "remote",
+      "url": "https://mcp.tuaazienda.it/jira",
+      "headers": { "Authorization": "Bearer {env:AI_STD_JIRA_TOKEN}" },
+      "enabled": false,
+      "timeout": 15000
+    },
+    "internal-docs": {
+      // Esempio di server locale (stdio)
+      "type": "local",
+      "command": ["npx", "-y", "@tuaazienda/internal-docs-mcp"],
+      "environment": { "DOCS_BASE_URL": "https://docs.tuaazienda.it" },
+      "enabled": false
+    }
+  },
+
+  // Permessi comuni. Ordine: pattern generici prima, specifici dopo.
+  "permission": {
+    "edit": {
+      "*": "allow",
+      ".env*": "deny",
+      "**/secrets/**": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny"
+    },
+    "bash": {
+      "*": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "mvn *test*": "allow",
+      "./mvnw *test*": "allow",
+      "./gradlew test*": "allow",
+      "*mvnw* *test*": "allow",
+      "*mvnw* verify*": "allow",
+      "*gradlew* test*": "allow",
+      "npm test*": "allow",
+      "npm run lint*": "allow",
+      "npx ng test*": "allow",
+      "git push*": "ask",
+      "rm -rf*": "deny",
+      "kubectl delete*": "deny"
+    },
+    "gitlab_*": "ask",
+    "gitlab_get_*": "allow",
+    "gitlab_list_*": "allow",
+    "external_directory": "ask"
+  }
+}
