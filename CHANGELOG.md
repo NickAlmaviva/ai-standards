@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2] - pilota
+### Added
+- Agente `aziendale`: sezione "Rispetto delle autorizzazioni" in cima al prompt. Dopo un'azione negata l'agente deve fermarsi e non cercare strade alternative per ottenere lo stesso effetto.
+- Divieti aggiuntivi per scorciatoie di cancellazione note (`::Delete(`, `shutil.rmtree`, `rmSync`, `rimraf`).
+
 ## [0.2.1] - pilota
 ### Fixed
 - Agente `aziendale`: i divieti sui comandi distruttivi coprono anche le varianti PowerShell (`Remove-Item -Recurse`) e cmd.exe (`rmdir /s`, `rd /s`, `del /s`), e funzionano anche quando il comando è avvolto in `if`, `;` o `&&`.
