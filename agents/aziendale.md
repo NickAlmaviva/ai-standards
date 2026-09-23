@@ -24,9 +24,26 @@ permission:
     "npm test*": allow
     "npm run lint*": allow
     "npx ng test*": allow
-    "git push*": ask
-    "rm -rf*": deny
-    "kubectl delete*": deny
+    "*git push*": ask
+    # Divieti: SEMPRE in fondo (vince l'ultima regola che corrisponde).
+    # Asterisco iniziale: il modello spesso avvolge il comando in if/;/&&.
+    # Unix
+    "*rm -rf*": deny
+    "*rm -fr*": deny
+    "*rm -r *": deny
+    # PowerShell
+    "*Remove-Item*-Recurse*": deny
+    "*Remove-Item*-r *": deny
+    "*Remove-Item*-rec*": deny
+    "*ri *-Recurse*": deny
+    # cmd.exe
+    "*rmdir /s*": deny
+    "*rd /s*": deny
+    "*del /s*": deny
+    # Altro
+    "*git reset --hard*": deny
+    "*git clean -f*": deny
+    "*kubectl delete*": deny
   "gitlab_*": ask
   "gitlab_get_*": allow
   "gitlab_list_*": allow

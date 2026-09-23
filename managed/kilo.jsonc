@@ -12,8 +12,10 @@
       "**/secrets/**": "deny"
     },
     "bash": {
-      "rm -rf*": "deny",
-      "kubectl delete*": "deny"
+      "*rm -rf*": "deny",
+      "*Remove-Item*-Recurse*": "deny",
+      "*rmdir /s*": "deny",
+      "*kubectl delete*": "deny"
     }
   }
   // Esempio: limitare i provider di modelli ammessi
