@@ -71,12 +71,15 @@ Lavora nella copia di sviluppo (es. `C:\dev\ai-standards`), sul ramo `develop`, 
    ```powershell
    powershell -ExecutionPolicy Bypass -File "$HOME\.ai-standards\install\install.ps1" -Ref develop
    ```
-5. **Prova con Copilot** usando la copia di sviluppo come marketplace locale (i plugin di un marketplace locale si caricano direttamente dalla cartella):
-   ```powershell
-   copilot plugin marketplace add C:\dev\ai-standards
-   copilot plugin install ai-standards@ai-standards-marketplace
-   ```
-   Ricarica VS Code. Esegui la checklist qui sotto con entrambi gli strumenti. A fine prova: `copilot plugin uninstall ai-standards` e `copilot plugin marketplace remove ai-standards-marketplace`, poi reinstalla dal marketplace aziendale.
+5. **Prova con Copilot** usando la copia di sviluppo come marketplace locale. Ogni client ha il proprio elenco di plugin, quindi l'installazione va fatta in ciascuno:
+   - **CLI**:
+     ```powershell
+     copilot plugin marketplace add C:\dev\ai-standards
+     copilot plugin install ai-standards@ai-standards-marketplace
+     ```
+   - **VS Code**: aggiungi `"file:///C:/dev/ai-standards"` a `chat.plugins.marketplaces` nelle impostazioni utente, poi installa **ai-standards** da `@agentPlugins` nella vista Estensioni.
+
+   Esegui la checklist qui sotto nei client che usa il team. A fine prova rimuovi il plugin e il marketplace locale (CLI: `copilot plugin uninstall ai-standards` e `copilot plugin marketplace remove ai-standards-marketplace`; VS Code: disinstalla da `@agentPlugins` e togli la voce `file:///` dalle impostazioni), poi reinstalla dal marketplace aziendale.
 6. Se tutto è ok, aggiorna `VERSION` e `CHANGELOG.md` (vedi sotto), rigenera con `build.py`, fai commit e porta le modifiche su `main` con l'etichetta:
    ```powershell
    python scripts\build.py

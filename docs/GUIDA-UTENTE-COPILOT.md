@@ -18,14 +18,7 @@ L'indirizzo del marketplace aziendale è:
 https://git.tuaazienda.it/platform/ai-standards.git
 ```
 
-### Copilot CLI (consigliato: vale anche per VS Code)
-
-```powershell
-copilot plugin marketplace add https://git.tuaazienda.it/platform/ai-standards.git
-copilot plugin install ai-standards@ai-standards-marketplace
-```
-
-VS Code riconosce automaticamente i plugin installati con la CLI: dopo l'installazione basta ricaricare la finestra (comando **Developer: Reload Window**).
+Ogni client ha **il proprio elenco di plugin**: se usi più client (ad esempio CLI e VS Code), installa il plugin in ciascuno.
 
 ### VS Code
 
@@ -40,6 +33,13 @@ VS Code riconosce automaticamente i plugin installati con la CLI: dopo l'install
 In alternativa: comando **Chat: Install Plugin From Source** e incolla l'indirizzo del repository.
 
 Gli agent plugin di VS Code sono in anteprima: se non vedi nulla, verifica che l'impostazione `chat.plugins.enabled` sia attiva. Se è bloccata, va abilitata dagli amministratori di Copilot dell'organizzazione.
+
+### Copilot CLI
+
+```powershell
+copilot plugin marketplace add https://git.tuaazienda.it/platform/ai-standards.git
+copilot plugin install ai-standards@ai-standards-marketplace
+```
 
 ### IntelliJ (e altri IDE JetBrains)
 
