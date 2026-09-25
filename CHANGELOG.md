@@ -5,7 +5,10 @@
 - Plugin GitHub Copilot (formato Agent Plugins 1.0): `plugin.json` alla radice e marketplace in `.github/plugin/marketplace.json`, installabile da VS Code, IntelliJ e Copilot CLI.
 - `shared/`: sorgente unica del testo di agenti e comandi, con intestazioni separate per Kilo e Copilot.
 - `scripts/build.py`: genera i file di Kilo (`agents/`, `commands/`) e di Copilot (`com.github.copilot/`) e sincronizza la versione nei manifesti. Il validatore segnala i file non allineati.
-- `docs/GUIDA-UTENTE-COPILOT.md`.
+- `docs/GUIDA-UTENTE-COPILOT.md`: installazione per VS Code, IntelliJ e CLI (ogni client ha il proprio elenco di plugin), versioni precise con il suffisso `#ref`.
+### Verificato nel pilota
+- Kilo Code: nessuna variazione di comportamento.
+- Copilot CLI, VS Code e IntelliJ: agenti, comandi con argomenti e skill caricati dal plugin; conferma richiesta per i comandi distruttivi.
 ### Changed
 - Modello a rami: sviluppo su `develop`, `main` contiene solo versioni rilasciate (è il ramo distribuito dal marketplace Copilot).
 - `agents/` e `commands/` sono ora file generati (contenuto per Kilo invariato, salvo una riga di commento iniziale).

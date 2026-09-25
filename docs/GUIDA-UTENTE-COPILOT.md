@@ -43,7 +43,27 @@ copilot plugin install ai-standards@ai-standards-marketplace
 
 ### IntelliJ (e altri IDE JetBrains)
 
-Serve una versione recente del plugin GitHub Copilot. Nella chat di Copilot apri le **personalizzazioni** (Customizations), sezione **Plugins**, e installa **ai-standards** aggiungendo il marketplace o direttamente dal repository sorgente con l'indirizzo qui sopra. Le voci esatte possono variare con la versione del plugin.
+Serve una versione recente del plugin GitHub Copilot (aggiornalo da **Settings → Plugins**).
+
+1. Apri **Settings → Tools → GitHub Copilot → Customizations**, sezione **Plugins**.
+2. In **Plugin Marketplaces** clicca **+** e inserisci l'indirizzo del repository:
+   ```
+   https://git.tuaazienda.it/platform/ai-standards.git
+   ```
+   Clicca **Apply**.
+3. Installa **ai-standards** dall'elenco dei plugin disponibili e chiudi con **OK**. Se la chat di Copilot era aperta, chiudila e riaprila.
+
+Se Copilot non usa le skill, verifica che siano abilitate in **Settings → Tools → GitHub Copilot → Chat**, nelle opzioni dell'agente.
+
+### Usare una versione precisa (facoltativo)
+
+In tutti i client l'indirizzo del marketplace può terminare con `#` seguito da un'etichetta di versione, per esempio:
+
+```
+https://git.tuaazienda.it/platform/ai-standards.git#v1.1.0
+```
+
+Senza suffisso ricevi sempre l'ultima versione rilasciata, ed è la scelta consigliata. Il suffisso serve solo se ti viene chiesto di restare su una versione specifica.
 
 ## Uso quotidiano
 
@@ -64,7 +84,7 @@ Per disattivare temporaneamente il plugin: `copilot plugin disable ai-standards`
 
 ## Regole d'uso (importanti)
 
-1. **Non attivare l'approvazione automatica dei comandi** (auto-approve in VS Code, approvazioni automatiche o "assisted approvals" in IntelliJ, `--allow-all` nella CLI) quando lavori con gli standard. Con Copilot la conferma dei comandi è l'unica protezione: il plugin non può vietare comandi come fa Kilo.
+1. **Non attivare l'approvazione automatica dei comandi** (auto-approve in VS Code, approvazioni automatiche o assistite in IntelliJ, `--allow-all` nella CLI) quando lavori con gli standard. Con Copilot la conferma dei comandi è l'unica protezione: il plugin non può vietare comandi come fa Kilo.
 2. **Leggi i comandi prima di approvarli** e rifiuta quelli che non capisci o che fanno qualcosa che non hai chiesto.
 3. **Se Copilot dice che un'azione è stata negata**, non cercare di aggirarla.
 

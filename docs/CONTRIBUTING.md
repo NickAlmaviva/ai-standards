@@ -78,6 +78,9 @@ Lavora nella copia di sviluppo (es. `C:\dev\ai-standards`), sul ramo `develop`, 
      copilot plugin install ai-standards@ai-standards-marketplace
      ```
    - **VS Code**: aggiungi `"file:///C:/dev/ai-standards"` a `chat.plugins.marketplaces` nelle impostazioni utente, poi installa **ai-standards** da `@agentPlugins` nella vista Estensioni.
+   - **IntelliJ**: **Settings → Tools → GitHub Copilot → Customizations → Plugin Marketplaces → +** e inserisci `file:///C:/dev/ai-standards`. Attenzione al formato: un percorso Windows normale (`C:\dev\...`) viene rifiutato, anche se la finestra dice di accettare percorsi locali. IntelliJ legge la cartella come repository Git: fai **commit** delle modifiche prima di provarle.
+
+   In alternativa, in tutti i client si può usare il repository remoto con il suffisso del ramo: `https://.../ai-standards.git#develop`.
 
    Esegui la checklist qui sotto nei client che usa il team. A fine prova rimuovi il plugin e il marketplace locale (CLI: `copilot plugin uninstall ai-standards` e `copilot plugin marketplace remove ai-standards-marketplace`; VS Code: disinstalla da `@agentPlugins` e togli la voce `file:///` dalle impostazioni), poi reinstalla dal marketplace aziendale.
 6. Se tutto è ok, aggiorna `VERSION` e `CHANGELOG.md` (vedi sotto), rigenera con `build.py`, fai commit e porta le modifiche su `main` con l'etichetta:
