@@ -1,4 +1,5 @@
 ---
+# FILE GENERATO da scripts/build.py: modifica shared/ e rigenera.
 description: Agente con gli standard aziendali ai-standards (regole, permessi, skill di stack, MCP). Selezionalo per lavorare sui microservizi e sui SAE che adottano gli standard.
 mode: primary
 permission:

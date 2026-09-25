@@ -9,6 +9,8 @@ Controlli:
 - agente aziendale: presente, mode primary, prompt entro la dimensione massima
 - agents/commands: frontmatter con description
 - config template: JSONC parsabile, nessun token in chiaro
+- plugin Copilot: plugin.json e marketplace.json coerenti
+- file generati (Kilo e Copilot) allineati alle sorgenti in shared/
 """
 import json
 import re
@@ -74,6 +76,19 @@ def check_main_agent():
     if frontmatter(f).get("mode") != "primary":
         errors.append("agents/aziendale.md: deve avere 'mode: primary'")
     body = re.sub(r"^---\s*\n.*?\n---\s*\n", "", text, count=1, flags=re.S)
+    # Nel blocco bash i deny devono stare in fondo (vince l'ultima regola)
+    fm_text = re.match(r"^---\s*\n(.*?)\n---", text, re.S).group(1)
+    bash = re.search(r"^  bash:\s*\n((?:    .*\n|\s*\n)+)", fm_text + "\n", re.M)
+    if bash:
+        seen_deny = False
+        for line in bash.group(1).splitlines():
+            m = re.match(r'\s+"?(.+?)"?\s*:\s*(allow|ask|deny)\s*$', line)
+            if not m:
+                continue
+            if m.group(2) == "deny":
+                seen_deny = True
+            elif seen_deny:
+                errors.append(f"agents/aziendale.md (sorgente: shared/agent-prompts/aziendale.kilo.yaml): la regola bash '{m.group(1)}' ({m.group(2)}) sta dopo un deny; i deny devono stare in fondo")
     if len(body) > MAX_AGENT_PROMPT_CHARS:
         errors.append(f"agents/aziendale.md: prompt di {len(body)} caratteri (max {MAX_AGENT_PROMPT_CHARS}); sposta i dettagli in una skill")
 
@@ -123,12 +138,53 @@ def check_config():
             errors.append(f"{rel}: sembra contenere un token in chiaro")
 
 
+AP_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+AP_NAME_RE = re.compile(r"^[a-z0-9]([a-z0-9.-]{0,62}[a-z0-9])?$")
+
+
+def check_copilot_plugin():
+    try:
+        plugin = json.loads((ROOT / "plugin.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        errors.append(f"plugin.json: mancante o non valido ({e})")
+        return
+    if plugin.get("$schema") != AP_SCHEMA:
+        errors.append("plugin.json: $schema deve essere quello di Agent Plugins 1.0")
+    name = plugin.get("name", "")
+    if not AP_NAME_RE.match(name) or "--" in name or ".." in name:
+        errors.append(f"plugin.json: nome '{name}' non valido per Agent Plugins 1.0")
+    allowed = {"$schema", "name", "version", "description", "author", "homepage",
+               "repository", "license", "keywords", "extensions"}
+    extra = set(plugin) - allowed
+    if extra:
+        errors.append(f"plugin.json: campi non ammessi in Agent Plugins 1.0: {sorted(extra)}")
+    try:
+        mkt = json.loads((ROOT / ".github/plugin/marketplace.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        errors.append(f".github/plugin/marketplace.json: mancante o non valido ({e})")
+        return
+    if not any(p.get("name") == name for p in mkt.get("plugins", [])):
+        errors.append(f"marketplace.json: nessuna voce per il plugin '{name}'")
+    if (ROOT / "mcp.json").exists():
+        mcp = json.loads((ROOT / "mcp.json").read_text(encoding="utf-8"))
+        if mcp.get("$schema") != "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json":
+            errors.append("mcp.json: $schema di Agent Plugins 1.0 mancante")
+
+
+def check_generated():
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import build  # noqa: E402
+    errors.extend(build.check())
+
+
 if __name__ == "__main__":
     check_skills()
     check_main_agent()
     check_md_with_description("agents")
     check_md_with_description("commands")
     check_config()
+    check_copilot_plugin()
+    check_generated()
     for w in warnings:
         print(f"WARN  {w}")
     for e in errors:

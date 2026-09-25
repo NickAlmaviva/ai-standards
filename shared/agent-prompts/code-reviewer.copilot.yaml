@@ -1,0 +1,2 @@
+name: code-reviewer
+description: Revisore del codice secondo gli standard aziendali. Usalo per revisionare diff, merge request o modifiche locali prima del commit. Non modifica file.

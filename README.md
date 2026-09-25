@@ -1,6 +1,12 @@
 # ai-standards
 
-Repository centrale degli standard AI per Kilo Code: **agente Aziendale** (regole e permessi), **skills**, **commands** e **MCP**.
+Repository centrale degli standard AI, per **Kilo Code** e **GitHub Copilot** (VS Code, IntelliJ, CLI): **agente aziendale** (regole e permessi), **skills**, **comandi** e **MCP**.
+
+- Utenti Kilo: [docs/GUIDA-UTENTE.md](docs/GUIDA-UTENTE.md)
+- Utenti Copilot: [docs/GUIDA-UTENTE-COPILOT.md](docs/GUIDA-UTENTE-COPILOT.md)
+- Manutentori: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) e [shared/README.md](shared/README.md)
+
+Le skill (`skills/`) e il testo di agenti e comandi (`shared/`) sono **comuni** ai due strumenti. Per Copilot la radice del repo è anche la radice del plugin (formato Agent Plugins 1.0) e `.github/plugin/marketplace.json` è il marketplace aziendale.
 Obiettivo: tutti i microservizi (BE) e i SAE (FE) lavorano con la stessa modalità, **senza** file di configurazione AI duplicati nei singoli repository.
 
 ## Come funziona
@@ -29,23 +35,31 @@ Poiché la config arriva via `KILO_CONFIG`, è considerata *trusted*: i riferime
 
 ```
 ai-standards/
-├── config/kilo.template.jsonc   # MCP e permessi globali (template)
+├── shared/                      # SORGENTI comuni di agenti e comandi (vedi shared/README.md)
+├── plugin.json                  # Copilot: manifesto del plugin (Agent Plugins 1.0)
+├── .github/plugin/marketplace.json  # Copilot: marketplace aziendale
+├── com.github.copilot/          # Copilot: agenti e comandi (GENERATI da shared/)
+├── config/kilo.template.jsonc   # Kilo: MCP e permessi globali (template)
 ├── skills/                      # conoscenza specifica, caricata on-demand
 │   ├── be-spring-microservice/
 │   ├── fe-angular-sae/
 │   ├── api-contract-openapi/
 │   └── testing-standards/
-├── agents/                      # aziendale.md (regole + permessi) e code-reviewer
-├── commands/                    # slash command (/review, /new-endpoint, ...)
+├── agents/                      # Kilo: aziendale e code-reviewer (GENERATI da shared/)
+├── commands/                    # Kilo: /review, /new-endpoint, ... (GENERATI da shared/)
 ├── install/                     # install/uninstall per Windows (.ps1) e Linux/macOS (.sh)
-├── scripts/                     # validazione + build index.json per skills.urls
+├── scripts/                     # build.py (generazione), validate.py, build_skills_index.py
 ├── templates/AGENTS.md.template # l'UNICO file opzionale ammesso nei progetti
 ├── managed/                     # esempio per enforcement via MDM
 ├── ci/                          # pipeline GitLab / GitHub
-└── docs/                        # linee guida per contribuire
+└── docs/                        # GUIDA-UTENTE.md (utenti) e CONTRIBUTING.md (manutentori)
 ```
 
-## Installazione (dev)
+## Installazione
+
+**Utenti Windows: segui [docs/GUIDA-UTENTE.md](docs/GUIDA-UTENTE.md).** Manutentori: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+Riepilogo:
 
 Linux / macOS:
 ```bash
@@ -67,6 +81,12 @@ Poi **chiudi completamente VS Code e riaprilo** (le variabili d'ambiente vengono
 - `kilo config check`
 - chiedendo all'agente: *"Quali skill hai disponibili?"*
 
+## Regole d'uso
+
+- Con l'agente aziendale **non attivare l'accettazione automatica**: la conferma umana è l'ultima protezione.
+- Leggi i comandi prima di approvarli; se sono strani, **Rifiuta** (il rifiuto ferma l'agente).
+- Un'azione bloccata dalle autorizzazioni non va aggirata.
+
 ## Aggiornamento
 
 ```bash
@@ -76,7 +96,7 @@ Poi in Kilo `/reload` o nuova sessione.
 
 ## Agente vs skill: dove mettere cosa
 
-- **agents/aziendale.md** → regole trasversali (modo di lavorare, sicurezza, git) e permessi. Il prompt è sempre in contesto quando l'agente è attivo: tienilo corto.
+- **shared/agent-prompts/aziendale.md** → regole trasversali (modo di lavorare, sicurezza, git); i permessi Kilo stanno in `aziendale.kilo.yaml`. Il prompt è sempre in contesto quando l'agente è attivo: tienilo corto.
 - **skills/** → tutto ciò che è specifico di uno stack o di un task. L'agente vede solo nome e descrizione e carica il contenuto quando serve. Così la skill BE viene usata sui microservizi e quella FE sui SAE, senza configurare i progetti.
 - **AGENTS.md nel progetto** → solo contesto di dominio unico di quel servizio. Mai duplicare le regole centrali. Vedi `templates/AGENTS.md.template`.
 

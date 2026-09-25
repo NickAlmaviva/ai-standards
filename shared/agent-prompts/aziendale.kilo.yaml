@@ -1,0 +1,58 @@
+description: Agente con gli standard aziendali ai-standards (regole, permessi, skill di stack, MCP). Selezionalo per lavorare sui microservizi e sui SAE che adottano gli standard.
+mode: primary
+permission:
+  skill:
+    "*": allow
+  edit:
+    "*": allow
+    ".env*": deny
+    "**/secrets/**": deny
+    "**/*.pem": deny
+    "**/*.key": deny
+  bash:
+    "*": ask
+    "git status*": allow
+    "git diff*": allow
+    "git log*": allow
+    "mvn *test*": allow
+    "./mvnw *test*": allow
+    "./gradlew test*": allow
+    "*mvnw* *test*": allow
+    "*mvnw* verify*": allow
+    "*gradlew* test*": allow
+    "npm test*": allow
+    "npm run lint*": allow
+    "npx ng test*": allow
+    "*git push*": ask
+    # Divieti: SEMPRE in fondo (vince l'ultima regola che corrisponde).
+    # Asterisco iniziale: il modello spesso avvolge il comando in if/;/&&.
+    # Unix
+    "*rm -rf*": deny
+    "*rm -fr*": deny
+    "*rm -r *": deny
+    # PowerShell
+    "*Remove-Item*-Recurse*": deny
+    "*Remove-Item*-r *": deny
+    "*Remove-Item*-rec*": deny
+    "*ri *-Recurse*": deny
+    # cmd.exe
+    "*rmdir /s*": deny
+    "*rd /s*": deny
+    "*del /s*": deny
+    # Scorciatoie note per cancellare (lista NON esaustiva: la vera
+    # protezione è la regola "*": ask e la sezione "Rispetto delle
+    # autorizzazioni" nel prompt)
+    "*::Delete(*": deny
+    "*shutil.rmtree*": deny
+    "*rmSync*": deny
+    "*rimraf*": deny
+    # Altro
+    "*git reset --hard*": deny
+    "*git clean -f*": deny
+    "*kubectl delete*": deny
+  "gitlab_*": ask
+  "gitlab_get_*": allow
+  "gitlab_list_*": allow
+  "jira_*": ask
+  "internal-docs_*": allow
+  external_directory: ask

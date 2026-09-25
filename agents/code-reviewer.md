@@ -1,4 +1,5 @@
 ---
+# FILE GENERATO da scripts/build.py: modifica shared/ e rigenera.
 description: Revisore del codice secondo gli standard aziendali. Usalo per revisionare diff, merge request o modifiche locali prima del commit.
 mode: subagent
 steps: 30

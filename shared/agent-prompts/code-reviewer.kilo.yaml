@@ -1,0 +1,12 @@
+description: Revisore del codice secondo gli standard aziendali. Usalo per revisionare diff, merge request o modifiche locali prima del commit.
+mode: subagent
+steps: 30
+permission:
+  skill:
+    "*": allow
+  edit: deny
+  bash:
+    "*": deny
+    "git diff*": allow
+    "git log*": allow
+    "git status*": allow

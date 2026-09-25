@@ -1,4 +1,5 @@
 ---
+# FILE GENERATO da scripts/build.py: modifica shared/ e rigenera.
 agent: aziendale
 description: Crea un nuovo endpoint REST con approccio contract-first
 ---
