@@ -20,6 +20,8 @@ Con gli altri agenti (Code, Plan, Debug...) Kilo funziona esattamente come prima
 - Windows con PowerShell
 - Git installato e accesso al repository `ai-standards`
 - VS Code con l'estensione Kilo Code aggiornata all'ultima versione
+- Node.js (serve per avviare i server MCP di Azure DevOps e Playwright)
+- Solo se lavori con database Oracle: SQLcl, con la sua cartella `bin` nel PATH (vedi più sotto)
 
 ## Installazione
 
@@ -28,7 +30,7 @@ Con gli altri agenti (Code, Plan, Debug...) Kilo funziona esattamente come prima
 Apri PowerShell e lancia:
 
 ```powershell
-git clone https://git.tuaazienda.it/platform/ai-standards.git "$HOME\.ai-standards"
+git clone https://github.com/NickAlmaviva/ai-standards.git "$HOME\.ai-standards"
 ```
 
 Se Git chiede di accedere, usa le tue credenziali aziendali.
@@ -74,12 +76,37 @@ Add-Content .git\info\exclude ".kilo/"
 
 L'ultima riga fa sì che Git ignori la cartella `.kilo` solo sul tuo PC: il repository del progetto non cambia.
 
+## Server MCP (strumenti esterni)
+
+Con l'agente aziendale Kilo può usare:
+
+- **Azure DevOps**: work item, repository, pipeline, wiki. Alla prima chiamata si apre il browser per l'accesso con il tuo account aziendale.
+- **Playwright**: apre un browser per provare le applicazioni web.
+- **SQLcl** (database Oracle): **spento di default**, si accende per singolo progetto.
+
+Kilo legge liberamente da Azure DevOps, ma chiede conferma prima di ogni modifica, e prima di ogni azione su Playwright e sul database.
+
+### Attivare SQLcl su un progetto
+
+1. Installa SQLcl e aggiungi la sua cartella `bin` al PATH (es. `C:\Program Files\Oracle\sqlcl\bin`). Da un nuovo PowerShell, `sql -version` deve rispondere.
+2. Salva in SQLcl le connessioni che Kilo potrà usare. Usa **solo database di sviluppo** e, se possibile, un utente in sola lettura.
+3. Nella cartella del progetto crea o modifica `.kilo\kilo.jsonc`:
+   ```jsonc
+   { "mcp": { "sqlcl": { "enabled": true } } }
+   ```
+   Se il file contiene già `default_agent`, unisci le due voci:
+   ```jsonc
+   { "default_agent": "aziendale", "mcp": { "sqlcl": { "enabled": true } } }
+   ```
+4. Se il file non deve finire nel repository, aggiungi `.kilo/` a `.git\info\exclude`.
+
 ## Regole d'uso (importanti)
 
 1. **Con l'agente aziendale non attivare l'accettazione automatica.** La conferma dei comandi è l'ultima protezione: i divieti automatici coprono i casi più comuni, ma un modello può sempre trovare un modo diverso di scrivere un comando.
 2. **Leggi i comandi prima di approvarli.** Se un comando ti sembra strano, o fa qualcosa che non hai chiesto, premi **Rifiuta**: il rifiuto ferma l'agente.
-3. **Se Kilo ti dice che un'azione è bloccata dalle autorizzazioni**, non cercare di aggirare il blocco. Se l'azione è davvero necessaria, eseguila tu; se pensi che il blocco sia sbagliato, segnalalo ai manutentori.
-4. **Non modificare i file dentro `%USERPROFILE%\.ai-standards`**: verrebbero sovrascritti, o bloccherebbero l'aggiornamento. Le proposte si inviano ai manutentori.
+3. **Database e Azure DevOps sono sistemi reali**: leggi con attenzione ogni richiesta di conferma che riguarda una query di modifica o un cambiamento su Azure DevOps.
+4. **Se Kilo ti dice che un'azione è bloccata dalle autorizzazioni**, non cercare di aggirare il blocco. Se l'azione è davvero necessaria, eseguila tu; se pensi che il blocco sia sbagliato, segnalalo ai manutentori.
+5. **Non modificare i file dentro `%USERPROFILE%\.ai-standards`**: verrebbero sovrascritti, o bloccherebbero l'aggiornamento. Le proposte si inviano ai manutentori.
 
 ## Aggiornamento
 

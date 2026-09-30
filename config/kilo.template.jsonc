@@ -4,33 +4,38 @@
 //
 // Dalla v0.2.0 gli standard sono "opt-in": regole e permessi vivono
 // nell'agente agents/aziendale.md. Qui restano solo:
-//  - i server MCP (collegati, ma con i tool vietati fuori dall'agente Aziendale)
+//  - i server MCP (collegati, ma con i tool vietati fuori dall'agente aziendale)
 //  - il divieto delle skill aziendali per tutti gli altri agenti
 {
   "$schema": "https://app.kilo.ai/config.json",
 
-  // MCP aziendali. I token arrivano da variabili d'ambiente del dev:
-  // {env:...} viene risolto perché questa config è caricata via KILO_CONFIG (trusted).
+  // Server MCP aziendali. Stessi server del plugin Copilot (mcp.json e
+  // copilot-plugins/oracle-sqlcl/mcp.json): se ne cambi uno, cambia anche l'altro.
+  // Prerequisiti sul PC: Node.js (per npx); per sqlcl, SQLcl con la cartella bin nel PATH.
   "mcp": {
-    "gitlab": {
-      "type": "remote",
-      "url": "https://mcp.tuaazienda.it/gitlab",
-      "headers": { "Authorization": "Bearer {env:AI_STD_GITLAB_TOKEN}" },
-      "enabled": false,
-      "timeout": 15000
-    },
-    "jira": {
-      "type": "remote",
-      "url": "https://mcp.tuaazienda.it/jira",
-      "headers": { "Authorization": "Bearer {env:AI_STD_JIRA_TOKEN}" },
-      "enabled": false,
-      "timeout": 15000
-    },
-    "internal-docs": {
+    "azure-devops": {
       "type": "local",
-      "command": ["npx", "-y", "@tuaazienda/internal-docs-mcp"],
-      "environment": { "DOCS_BASE_URL": "https://docs.tuaazienda.it" },
-      "enabled": false
+      // -d: domini abilitati (core, work, work-items, search, test-plans,
+      //     repositories, wiki, pipelines, advanced-security).
+      // Consigliato: fissare la versione (es. @azure-devops/mcp@2.3.0) invece di @latest.
+      "command": ["npx", "-y", "@azure-devops/mcp@latest", "AlmaHealth",
+                  "-d", "core", "work", "work-items", "repositories", "pipelines", "wiki", "search"],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "sqlcl": {
+      // Accesso ai database: spento di default. Si accende per progetto con
+      // .kilo/kilo.jsonc -> { "mcp": { "sqlcl": { "enabled": true } } }
+      "type": "local",
+      "command": ["sql", "-mcp"],
+      "enabled": false,
+      "timeout": 30000
     }
   },
 
@@ -45,8 +50,8 @@
       "api-contract-openapi": "deny",
       "testing-standards": "deny"
     },
-    "gitlab_*": "deny",
-    "jira_*": "deny",
-    "internal-docs_*": "deny"
+    "azure-devops_*": "deny",
+    "playwright_*": "deny",
+    "sqlcl_*": "deny"
   }
 }

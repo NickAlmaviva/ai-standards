@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0] - server MCP
+### Added
+- Server MCP **Azure DevOps** e **Playwright** per Kilo (`config/kilo.template.jsonc`) e Copilot (`mcp.json`).
+- Server MCP **SQLcl**: in Kilo spento di default e attivabile per progetto; in Copilot nel plugin facoltativo `ai-standards-oracle` (`copilot-plugins/oracle-sqlcl/`).
+- Agente aziendale: regole per Azure DevOps (modifiche solo su richiesta), database (sola lettura salvo richiesta, conferma prima di DDL/DML) e browser.
+- Permessi Kilo: letture di Azure DevOps consentite, modifiche e tool Playwright/SQLcl con conferma; tutti vietati fuori dall'agente aziendale.
+- Validatore: regole di Agent Plugins 1.0 per `mcp.json` e marketplace con più plugin.
+### Removed
+- Server MCP di esempio `gitlab`, `jira`, `internal-docs`.
+
 ## [1.1.0] - supporto GitHub Copilot
 ### Added
 - Plugin GitHub Copilot (formato Agent Plugins 1.0): `plugin.json` alla radice e marketplace in `.github/plugin/marketplace.json`, installabile da VS Code, IntelliJ e Copilot CLI.

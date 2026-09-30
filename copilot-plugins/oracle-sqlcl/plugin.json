@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ai-standards-oracle",
+  "version": "1.2.0",
+  "description": "Accesso ai database Oracle tramite SQLcl (server MCP). Facoltativo: richiede SQLcl installato con la cartella bin nel PATH.",
+  "author": {
+    "name": "Team piattaforma"
+  },
+  "keywords": [
+    "oracle",
+    "sqlcl",
+    "database"
+  ]
+}

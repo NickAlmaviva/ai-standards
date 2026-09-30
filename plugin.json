@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ai-standards",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Standard aziendali per lo sviluppo con AI: skill di stack (Spring Boot, Angular, OpenAPI, test), agente aziendale e code reviewer.",
   "author": {
     "name": "Team piattaforma"

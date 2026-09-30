@@ -12,7 +12,8 @@ File generati (NON modificare a mano, vengono sovrascritti):
   agents/<nome>.md, commands/<nome>.md                              -> Kilo
   com.github.copilot/agents/<nome>.agent.md,
   com.github.copilot/commands/<nome>.md                             -> Copilot
-  plugin.json, .github/plugin/marketplace.json (solo il campo version)
+  plugin.json, copilot-plugins/*/plugin.json, .github/plugin/marketplace.json
+  (solo i campi version: una versione unica per tutti i plugin del repo)
 
 Uso:
   python scripts/build.py          rigenera i file
@@ -75,8 +76,14 @@ def expected_files() -> dict:
     mkt = json.loads(read(ROOT / mkt_path))
     mkt.setdefault("metadata", {})["version"] = version
     for entry in mkt.get("plugins", []):
-        if entry.get("name") == plugin["name"]:
-            entry["version"] = version
+        # Una sola versione per tutti i plugin del repository
+        entry["version"] = version
+        src = entry.get("source")
+        if isinstance(src, str) and src.startswith("./") and src.rstrip("/") != ".":
+            sub = src[2:].rstrip("/") + "/plugin.json"
+            sub_plugin = json.loads(read(ROOT / sub))
+            sub_plugin["version"] = version
+            out[sub] = json.dumps(sub_plugin, indent=2, ensure_ascii=False) + "\n"
     out[mkt_path] = json.dumps(mkt, indent=2, ensure_ascii=False) + "\n"
     return out
 

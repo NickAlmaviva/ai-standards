@@ -37,6 +37,8 @@ Poiché la config arriva via `KILO_CONFIG`, è considerata *trusted*: i riferime
 ai-standards/
 ├── shared/                      # SORGENTI comuni di agenti e comandi (vedi shared/README.md)
 ├── plugin.json                  # Copilot: manifesto del plugin (Agent Plugins 1.0)
+├── mcp.json                     # Copilot: server MCP del plugin principale (Azure DevOps, Playwright)
+├── copilot-plugins/oracle-sqlcl/ # Copilot: plugin facoltativo con il server MCP SQLcl
 ├── .github/plugin/marketplace.json  # Copilot: marketplace aziendale
 ├── com.github.copilot/          # Copilot: agenti e comandi (GENERATI da shared/)
 ├── config/kilo.template.jsonc   # Kilo: MCP e permessi globali (template)
@@ -104,7 +106,7 @@ Poi in Kilo `/reload` o nuova sessione.
 
 Un progetto può disattivare un MCP ereditato o restringere permessi con un `.kilo/kilo.jsonc` minimale, ad esempio:
 ```jsonc
-{ "mcp": { "jira": { "enabled": false } } }
+{ "mcp": { "sqlcl": { "enabled": true } } }
 ```
 Da usare solo come eccezione motivata.
 

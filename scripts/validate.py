@@ -142,22 +142,68 @@ AP_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 AP_NAME_RE = re.compile(r"^[a-z0-9]([a-z0-9.-]{0,62}[a-z0-9])?$")
 
 
-def check_copilot_plugin():
+MCP_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
+MCP_SERVER_FIELDS = {"type", "command", "args", "env", "cwd", "url", "headers"}
+ALLOWED_PLACEHOLDERS = {"${PLUGIN_ROOT}", "${PLUGIN_DATA}"}
+
+
+def check_plugin_manifest(rel: str) -> str:
     try:
-        plugin = json.loads((ROOT / "plugin.json").read_text(encoding="utf-8"))
+        plugin = json.loads((ROOT / rel).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
-        errors.append(f"plugin.json: mancante o non valido ({e})")
-        return
+        errors.append(f"{rel}: mancante o non valido ({e})")
+        return ""
     if plugin.get("$schema") != AP_SCHEMA:
-        errors.append("plugin.json: $schema deve essere quello di Agent Plugins 1.0")
+        errors.append(f"{rel}: $schema deve essere quello di Agent Plugins 1.0")
     name = plugin.get("name", "")
     if not AP_NAME_RE.match(name) or "--" in name or ".." in name:
-        errors.append(f"plugin.json: nome '{name}' non valido per Agent Plugins 1.0")
+        errors.append(f"{rel}: nome '{name}' non valido per Agent Plugins 1.0")
     allowed = {"$schema", "name", "version", "description", "author", "homepage",
                "repository", "license", "keywords", "extensions"}
     extra = set(plugin) - allowed
     if extra:
-        errors.append(f"plugin.json: campi non ammessi in Agent Plugins 1.0: {sorted(extra)}")
+        errors.append(f"{rel}: campi non ammessi in Agent Plugins 1.0: {sorted(extra)}")
+    return name
+
+
+def check_mcp_json(rel: str):
+    """Regole di Agent Plugins 1.0: un mcp.json non valido disattiva TUTTI gli MCP del plugin."""
+    try:
+        mcp = json.loads((ROOT / rel).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        errors.append(f"{rel}: non valido ({e})")
+        return
+    if mcp.get("$schema") != MCP_SCHEMA:
+        errors.append(f"{rel}: $schema di Agent Plugins 1.0 mancante o errato")
+    extra = set(mcp) - {"$schema", "mcpServers"}
+    if extra:
+        errors.append(f"{rel}: campi di primo livello non ammessi {sorted(extra)} (es. 'inputs' e 'servers' sono di VS Code, non di Agent Plugins)")
+    for name, srv in (mcp.get("mcpServers") or {}).items():
+        where = f"{rel} > {name}"
+        bad = set(srv) - MCP_SERVER_FIELDS
+        if bad:
+            errors.append(f"{where}: campi non ammessi {sorted(bad)}")
+        t = srv.get("type")
+        if t not in ("stdio", "streamable-http", "sse"):
+            errors.append(f"{where}: 'type' obbligatorio (stdio, streamable-http o sse)")
+        if t == "stdio":
+            cmd = srv.get("command", "")
+            if not cmd:
+                errors.append(f"{where}: 'command' mancante")
+            elif " " in cmd or (("/" in cmd or "\\" in cmd) and not cmd.startswith("./")):
+                errors.append(f"{where}: 'command' deve essere un solo eseguibile nel PATH (es. 'sql') o un percorso che inizia con ./ (niente percorsi assoluti)")
+        for value in list(srv.get("args", [])) + list((srv.get("env") or {}).values()) + [srv.get("cwd", "")]:
+            for ph in re.findall(r"\$\{[^}]*\}", str(value)):
+                if ph not in ALLOWED_PLACEHOLDERS:
+                    errors.append(f"{where}: segnaposto {ph} non supportato (ammessi solo ${{PLUGIN_ROOT}} e ${{PLUGIN_DATA}})")
+        if "TUA-ORGANIZZAZIONE" in json.dumps(srv):
+            warnings.append(f"{where}: contiene ancora il segnaposto TUA-ORGANIZZAZIONE")
+
+
+def check_copilot_plugin():
+    name = check_plugin_manifest("plugin.json")
+    if (ROOT / "mcp.json").exists():
+        check_mcp_json("mcp.json")
     try:
         mkt = json.loads((ROOT / ".github/plugin/marketplace.json").read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
@@ -165,10 +211,18 @@ def check_copilot_plugin():
         return
     if not any(p.get("name") == name for p in mkt.get("plugins", [])):
         errors.append(f"marketplace.json: nessuna voce per il plugin '{name}'")
-    if (ROOT / "mcp.json").exists():
-        mcp = json.loads((ROOT / "mcp.json").read_text(encoding="utf-8"))
-        if mcp.get("$schema") != "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json":
-            errors.append("mcp.json: $schema di Agent Plugins 1.0 mancante")
+    for entry in mkt.get("plugins", []):
+        src = entry.get("source")
+        if not (isinstance(src, str) and src.startswith("./")) or src.rstrip("/") == ".":
+            continue
+        base = src[2:].rstrip("/")
+        sub_name = check_plugin_manifest(f"{base}/plugin.json")
+        if sub_name and sub_name != entry.get("name"):
+            errors.append(f"marketplace.json: la voce '{entry.get('name')}' punta a un plugin che si chiama '{sub_name}'")
+        if (ROOT / base / "mcp.json").exists():
+            check_mcp_json(f"{base}/mcp.json")
+    if "TUA-ORGANIZZAZIONE" in (ROOT / "config/kilo.template.jsonc").read_text(encoding="utf-8"):
+        warnings.append("config/kilo.template.jsonc: contiene ancora il segnaposto TUA-ORGANIZZAZIONE")
 
 
 def check_generated():

@@ -50,9 +50,11 @@ permission:
     "*git reset --hard*": deny
     "*git clean -f*": deny
     "*kubectl delete*": deny
-  "gitlab_*": ask
-  "gitlab_get_*": allow
-  "gitlab_list_*": allow
-  "jira_*": ask
-  "internal-docs_*": allow
+  # MCP (nome tool = <server>_<tool>). Vince l'ultima regola che corrisponde.
+  "azure-devops_*": ask
+  "azure-devops_*_get_*": allow
+  "azure-devops_*_list_*": allow
+  "azure-devops_search_*": allow
+  "playwright_*": ask
+  "sqlcl_*": ask
   external_directory: ask

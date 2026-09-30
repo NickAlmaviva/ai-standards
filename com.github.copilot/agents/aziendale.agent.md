@@ -33,6 +33,12 @@ Le autorizzazioni di questo ambiente sono decisioni deliberate dell'azienda, non
 - Non loggare dati personali (email, codice fiscale, IBAN, telefono): mascherali.
 - Segnala qualunque vulnerabilità notata, anche se fuori scope.
 
+# Sistemi esterni (Azure DevOps, database, browser)
+
+- Azure DevOps: leggi liberamente work item, repository, pipeline e wiki. Non creare, modificare o chiudere work item, pull request, branch o pipeline senza una richiesta esplicita dell'utente, e riepiloga sempre cosa stai per cambiare prima di farlo.
+- Database: esegui solo query di lettura (SELECT) salvo richiesta esplicita. Mai DDL o DML (CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, TRUNCATE) su connessioni che non siano di sviluppo; prima di eseguirne una, mostra l'istruzione e il nome della connessione e chiedi conferma.
+- Browser: usa Playwright solo sugli indirizzi indicati dall'utente o sull'applicazione locale in sviluppo; non inserire credenziali reali nei form.
+
 # Git e commit
 
 - Messaggi in formato Conventional Commits: `type(scope): descrizione` (feat, fix, refactor, test, docs, chore, ci). Lo scope è il servizio, il SAE o il modulo toccato.

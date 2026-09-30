@@ -7,6 +7,8 @@ Gli standard aziendali sono disponibili come **plugin di Copilot**, installabile
 - Le **skill** aziendali (Spring Boot, Angular, OpenAPI, test): Copilot le carica da solo quando il lavoro le riguarda.
 - L'agente **aziendale**, con le regole di lavoro, sicurezza e commit.
 - L'agente **code-reviewer** e i comandi `/new-endpoint`, `/new-component`, `/review`.
+- I server MCP **Azure DevOps** e **Playwright** (richiedono Node.js sul PC).
+- Facoltativo: il plugin **ai-standards-oracle**, con il server MCP **SQLcl** per i database Oracle.
 
 Sono gli stessi contenuti usati da chi lavora con Kilo Code.
 
@@ -15,7 +17,7 @@ Sono gli stessi contenuti usati da chi lavora con Kilo Code.
 L'indirizzo del marketplace aziendale è:
 
 ```
-https://git.tuaazienda.it/platform/ai-standards.git
+https://github.com/NickAlmaviva/ai-standards.git
 ```
 
 Ogni client ha **il proprio elenco di plugin**: se usi più client (ad esempio CLI e VS Code), installa il plugin in ciascuno.
@@ -25,7 +27,7 @@ Ogni client ha **il proprio elenco di plugin**: se usi più client (ad esempio C
 1. Apri le impostazioni in formato JSON (comando **Preferences: Open User Settings (JSON)**) e aggiungi:
    ```json
    "chat.plugins.marketplaces": [
-     "https://git.tuaazienda.it/platform/ai-standards.git"
+     "https://github.com/NickAlmaviva/ai-standards.git"
    ]
    ```
 2. Apri la vista Estensioni (Ctrl+Shift+X), cerca `@agentPlugins` e installa **ai-standards**.
@@ -37,7 +39,7 @@ Gli agent plugin di VS Code sono in anteprima: se non vedi nulla, verifica che l
 ### Copilot CLI
 
 ```powershell
-copilot plugin marketplace add https://git.tuaazienda.it/platform/ai-standards.git
+copilot plugin marketplace add https://github.com/NickAlmaviva/ai-standards.git
 copilot plugin install ai-standards@ai-standards-marketplace
 ```
 
@@ -48,19 +50,28 @@ Serve una versione recente del plugin GitHub Copilot (aggiornalo da **Settings �
 1. Apri **Settings → Tools → GitHub Copilot → Customizations**, sezione **Plugins**.
 2. In **Plugin Marketplaces** clicca **+** e inserisci l'indirizzo del repository:
    ```
-   https://git.tuaazienda.it/platform/ai-standards.git
+   https://github.com/NickAlmaviva/ai-standards.git
    ```
    Clicca **Apply**.
 3. Installa **ai-standards** dall'elenco dei plugin disponibili e chiudi con **OK**. Se la chat di Copilot era aperta, chiudila e riaprila.
 
 Se Copilot non usa le skill, verifica che siano abilitate in **Settings → Tools → GitHub Copilot → Chat**, nelle opzioni dell'agente.
 
+### Plugin facoltativo per i database Oracle
+
+Dallo stesso marketplace puoi installare anche **ai-standards-oracle**, solo se lavori con database Oracle. Prima:
+
+1. installa SQLcl e aggiungi la sua cartella `bin` al PATH (da un nuovo PowerShell, `sql -version` deve rispondere);
+2. salva in SQLcl le connessioni da usare: **solo database di sviluppo** e, se possibile, un utente in sola lettura.
+
+Poi installa il plugin come hai fatto per **ai-standards** (CLI: `copilot plugin install ai-standards-oracle@ai-standards-marketplace`).
+
 ### Usare una versione precisa (facoltativo)
 
 In tutti i client l'indirizzo del marketplace può terminare con `#` seguito da un'etichetta di versione, per esempio:
 
 ```
-https://git.tuaazienda.it/platform/ai-standards.git#v1.1.0
+https://github.com/NickAlmaviva/ai-standards.git#v1.1.0
 ```
 
 Senza suffisso ricevi sempre l'ultima versione rilasciata, ed è la scelta consigliata. Il suffisso serve solo se ti viene chiesto di restare su una versione specifica.
@@ -86,7 +97,8 @@ Per disattivare temporaneamente il plugin: `copilot plugin disable ai-standards`
 
 1. **Non attivare l'approvazione automatica dei comandi** (auto-approve in VS Code, approvazioni automatiche o assistite in IntelliJ, `--allow-all` nella CLI) quando lavori con gli standard. Con Copilot la conferma dei comandi è l'unica protezione: il plugin non può vietare comandi come fa Kilo.
 2. **Leggi i comandi prima di approvarli** e rifiuta quelli che non capisci o che fanno qualcosa che non hai chiesto.
-3. **Se Copilot dice che un'azione è stata negata**, non cercare di aggirarla.
+3. **Approva i tool MCP uno alla volta**: al primo avvio l'IDE può chiederti di fidarti dei server MCP del plugin, e poi di approvare le singole chiamate. Non scegliere "consenti sempre" per le azioni che modificano Azure DevOps o il database.
+4. **Se Copilot dice che un'azione è stata negata**, non cercare di aggirarla.
 
 ## Aggiornamento
 
